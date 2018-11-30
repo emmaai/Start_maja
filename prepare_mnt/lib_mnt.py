@@ -46,7 +46,7 @@ def TestLand(lon, lat):
 
 ##################################### Lecture de fichier de parametres "Mot_clé=Valeur"
 def lire_param_txt(fic_txt):
-    with file(fic_txt, 'r') as f:
+    with open(fic_txt, 'r') as f:
         for ligne in f.readlines():
             if ligne.find('INDIR_MNT') == 0:
                 INDIR_MNT = (ligne.split('=')[1]).strip()
@@ -81,11 +81,11 @@ class classe_site:
 ############################ Lecture du fichier site
 def lire_fichier_site(fic_site):
     nom = os.path.basename(fic_site).split('.')[0]
-    with file(fic_site, 'r') as f:
+    with open(fic_site, 'r') as f:
         for ligne in f.readlines():
             if ligne.find('proj') == 0:
                 proj = ligne.split('=')[1].strip()
-                print proj
+                print(proj)
             if ligne.find('EPSG_out') == 0:
                 EPSG_out = int(ligne.split('=')[1])
             if ligne.find('chaine_proj') == 0:
@@ -117,7 +117,7 @@ def lire_fichier_site(fic_site):
 def lire_entete_mnt(fic_hdr):
     """lecture du fichier hdr, en entree, chemin complet du fichier
     """
-    f = file(fic_hdr, 'r')
+    f = open(fic_hdr, 'r')
     for ligne in f.readlines():
         if ligne.find('samples') >= 0:
             nb_col = int(ligne.split('=')[1])
@@ -142,7 +142,7 @@ def lire_entete_mnt(fic_hdr):
             elif (type_envi == 12):
                 type_donnee = 'uint16'
             else:
-                print 'type %d non pris en compte' % type_envi
+                print('type %d non pris en compte' % type_envi)
 
     return (nb_lig, nb_col, type_donnee, endian)
 
@@ -220,7 +220,7 @@ class classe_mnt:
         chaine_etendue = str(self.ulx) + ' ' + str(self.lry) + ' ' + str(self.lrx) + ' ' + str(self.uly)
         commande = 'gdalwarp  -overwrite -r cubic -ot Float32 -srcnodata -32768 -dstnodata 0 -of ENVI -tr %d %d -te %s -t_srs %s %s %s\n' % (
         self.res, self.res, chaine_etendue, self.chaine_proj, fic_in, fic_out)
-        print commande
+        print(commande)
         os.system(commande)
 
     def decoupe_int(self, fic_in, fic_out):
@@ -228,7 +228,7 @@ class classe_mnt:
         chaine_etendue = str(self.ulx) + ' ' + str(self.lry) + ' ' + str(self.lrx) + ' ' + str(self.uly)
         commande = 'gdalwarp  -overwrite -r cubic -srcnodata -32768 -dstnodata 0 -of ENVI -tr %d %d -te %s -t_srs %s %s %s\n' % (
         self.res, self.res, chaine_etendue, self.chaine_proj, fic_in, fic_out)
-        print commande
+        print(commande)
         os.system(commande)
 
     #############################################################
@@ -236,7 +236,7 @@ class classe_mnt:
     #############################################################
 
     def decoupe(self, mnt_in):
-        print "###decoupage " + str(self.res) + 'm'
+        print("###decoupage " + str(self.res) + 'm')
         rac_mnt = self.racine + '_' + str(self.res) + 'm'
         fic_hdr_mnt = rac_mnt + '.hdr'
         fic_mnt = rac_mnt + '.mnt'
@@ -276,7 +276,7 @@ class classe_mnt:
 
     def calcul_gradient(self):
         rac_mnt = self.racine + '_' + str(self.res) + 'm'
-        print rac_mnt
+        print(rac_mnt)
         fic_mnt = rac_mnt + 'float.mnt'
         fic_hdr = rac_mnt + 'float.hdr'
         fic_dz_dl = rac_mnt + 'float.dz_dl'
@@ -300,14 +300,14 @@ class classe_mnt:
 
     def calcul_pente_aspect_fic(self):
         rac_mnt = self.racine + '_' + str(self.res) + 'm'
-        print rac_mnt
+        print(rac_mnt)
 
         fic_hdr = rac_mnt + 'float.hdr'
         fic_dz_dl = rac_mnt + 'float.dz_dl'
         fic_dz_dc = rac_mnt + 'float.dz_dc'
 
         (nblig, nbcol, type_donnee, endian) = lire_entete_mnt(fic_hdr)
-        print nblig * nbcol * 2
+        print(nblig * nbcol * 2)
         # dz_dl=(np.fromfile(fic_dz_dl,type_donnee)).reshape(nblig,nbcol).astype('int16')
         # dz_dc=(np.fromfile(fic_dz_dc,type_donnee)).reshape(nblig,nbcol).astype('int16')
 
@@ -346,7 +346,7 @@ class classe_mnt:
         eau = np.where((mnt < 0) & (np.abs(dz_dl) <= 1e5) & (np.abs(dz_dc) <= 1e5), 1, 0)
 
         eau.astype('int16').tofile(fic_eau)
-        print fic_eau
+        print(fic_eau)
         shutil.copy(fic_hdr_mnt, fic_hdr_eau)
 
     #############################################################
@@ -362,7 +362,7 @@ class classe_mnt:
         chaine_etendue = str(self.ulx) + ' ' + str(self.lry) + ' ' + str(self.lrx) + ' ' + str(self.uly)
         commande = 'gdalwarp -overwrite  -r near -of ENVI -tr %d %d -te %s -t_srs %s %s %s\n' % (
         self.res, self.res, chaine_etendue, self.chaine_proj, eau_in, fic_eau)
-        print commande
+        print(commande)
         os.system(commande)
 
 
@@ -374,13 +374,15 @@ def fusion_mnt(liste_fic_mnt, liste_fic_eau, liste_centre_eau, rep_mnt, rep_swbd
         working_dir = tempfile.mkdtemp(prefix="{}_".format(nom_site))
     else:
         working_dir = tempfile.mkdtemp(prefix="{}_".format(nom_site), dir=working_dir)
-    print "liste_fic_mnt", liste_fic_mnt
+    print("liste_fic_mnt", liste_fic_mnt)
     for fic in liste_fic_mnt:
-        print rep_mnt + '/' + fic
+        print(rep_mnt + '/' + fic)
         if not (os.path.exists(rep_mnt + '/' + fic)):
             ficzip = fic.replace('tif', 'zip')
             commande = "unzip -o %s/%s -d %s" % (rep_mnt, ficzip, working_dir)
-            os.system(commande)
+        else:
+            commande = 'cp %s %s' %(rep_mnt+ '/' + fic, working_dir)
+        os.system(commande)
     if len(liste_fic_mnt) > 1:
         nom_mnt = tempfile.mkstemp(prefix="mnt_{}".format(nom_site), suffix=".tif", dir=working_dir)[1]
         commande = "gdal_merge.py -o " + nom_mnt
@@ -388,19 +390,19 @@ def fusion_mnt(liste_fic_mnt, liste_fic_eau, liste_centre_eau, rep_mnt, rep_swbd
             commande = commande + " " + rep_mnt + fic_mnt + " "
         if os.path.exists(nom_mnt):
             os.remove(nom_mnt)
-        print commande
+        print(commande)
         os.system(commande)
 
     elif len(liste_fic_mnt) == 1:
         nom_mnt = os.path.join(working_dir, liste_fic_mnt[0])
     else:
-        print "liste_fic_mnt is empty"
+        print("liste_fic_mnt is empty")
         raise ("ErreurDeParametreSite")
 
     ########################on créé aussi le mnt avec no_data=0
     nom_mnt_nodata0 = nom_mnt.replace(".tif", "nodata0.tif")
     commande = 'gdalwarp  -r cubic -srcnodata -32767 -dstnodata 0  %s %s\n' % (nom_mnt, nom_mnt_nodata0)
-    print commande
+    print(commande)
     os.system(commande)
 
     if calcul_eau_mnt == 0:  # si on est en deça de 60°N
@@ -425,20 +427,20 @@ def fusion_mnt(liste_fic_mnt, liste_fic_eau, liste_centre_eau, rep_mnt, rep_swbd
         liste_tuiles_manquantes = ["e017n03", "e006n30", "e006n29", "e005n30", "e005n29", "e015n00", "e015s24",
                                    "e022n28", "e023n28", "w074n01", "e034n02", "e035n02"]
         for i, racine_nom_eau in enumerate(liste_fic_eau):
-            print racine_nom_eau
+            print(racine_nom_eau)
             shp = glob.glob(rep_swbd + '/' + racine_nom_eau + "*.shp")
             # if shp file does not exist
             if len(shp) == 0:
-                print 'missing SWBD watr file : ', racine_nom_eau
+                print('missing SWBD watr file : ', racine_nom_eau)
 
                 # test if center is water or land
                 land = TestLand(liste_centre_eau[i][0], liste_centre_eau[i][1])
                 if land:
                     valeur = 0
-                    print "it is a fully land tile"
+                    print("it is a fully land tile")
                 else:
                     valeur = 1
-                    print "it is a fully water tile"
+                    print("it is a fully water tile")
                 fic_vecteur_eau = rep_swbd + '/' + racine_nom_eau + ".gml"
                 creer_fichier_eau(fic_vecteur_eau, racine_nom_eau)
             # if shp file exists
@@ -449,8 +451,8 @@ def fusion_mnt(liste_fic_mnt, liste_fic_eau, liste_centre_eau, rep_mnt, rep_swbd
                 racine_nom_eau = os.path.basename(fic_vecteur_eau)[:-4]
             commande = "gdal_rasterize -burn %d -l %s %s %s" % (
             valeur, racine_nom_eau, fic_vecteur_eau, nom_raster_swbd)
-            print "#############Fichier eau :", fic_vecteur_eau
-            print commande
+            print("#############Fichier eau :", fic_vecteur_eau)
+            print(commande)
             os.system(commande)
     else:
         nom_raster_swbd = ""
@@ -510,9 +512,9 @@ def creer_fichier_eau(fic_eau, nom_eau):
     patron = patron.replace('LATMAX', str(num_y + 1))
     patron = patron.replace('NOMEAU', nom_eau)
 
-    print fic_eau
+    print(fic_eau)
     # print patron
-    f = file(fic_eau, "w")
+    f = open(fic_eau, "w")
     f.write(patron)
     f.close()
     return

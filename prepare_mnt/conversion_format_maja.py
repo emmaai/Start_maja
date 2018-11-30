@@ -56,14 +56,14 @@ def writeHDR(hdr_out,tuile,proj,ulx,uly,resx,resy,nbCol,nbLig,moyenne,ecart) :
         epsg="326%02d"%epsg_num
     else:
         epsg="327%d02"%epsg_num
-    print epsg
+    print(epsg)
 
     proj="WGS 84 / UTM zone %s"%epsg_asc
 
-    print proj,epsg
+    print(proj,epsg)
     
-    with file(hdr_out,"w") as fout:
-        with file(hdr_template) as fin:
+    with open(hdr_out,"w") as fout:
+        with open(hdr_template) as fin:
             lignes=fin.readlines()
             for lig in lignes:
                 if lig.find("tuile")>0:
@@ -95,10 +95,10 @@ def writeHDR(hdr_out,tuile,proj,ulx,uly,resx,resy,nbCol,nbLig,moyenne,ecart) :
 
 if len(sys.argv)==1  :
     prog = os.path.basename(sys.argv[0])
-    print '      '+sys.argv[0]+' [options]'
-    print "       Help : ", prog, " --help"
-    print "       Or : ", prog, " -h"
-    print "example : python %s -t 34LGJ -f mnt/34LGJ"%sys.argv[0]
+    print('      '+sys.argv[0]+' [options]')
+    print("       Help : ", prog, " --help")
+    print("       Or : ", prog, " -h")
+    print("example : python %s -t 34LGJ -f mnt/34LGJ"%sys.argv[0])
     sys.exit(-1)
 else:
     usage = "usage: %prog [options] "
@@ -158,7 +158,7 @@ for i,res in enumerate(resolutions):
     nom_in=base_in.replace("_10m.mnt","_%sm.%s"%(res,suff_proto))
     nom_out=rac_out+"_%s.TIF"%suff_MAJA[i]                           
     commande="gdal_translate -of GTIFF %s %s"%(nom_in,nom_out)
-    print commande
+    print(commande)
     os.system(commande)
                            
 
@@ -171,7 +171,7 @@ for i,res in enumerate(resolutions):
     nom_in=base_in.replace("_10m.mnt","_%sm.%s"%(res,suff_proto))
     nom_out=rac_out+"_%s.TIF"%suff_MAJA[i]                           
     commande="gdal_translate -of GTIFF %s %s"%(nom_in,nom_out)
-    print commande
+    print(commande)
     os.system(commande)
 
 
@@ -184,7 +184,7 @@ for i,res in enumerate(resolutions):
     nom_in=base_in.replace("_10m.mnt","_%sm.%s"%(res,suff_proto))
     nom_out=rac_out+"_%s.TIF"%suff_MAJA[i]                           
     commande="gdal_translate -of GTIFF %s %s"%(nom_in,nom_out)
-    print commande
+    print(commande)
     os.system(commande)
 
 # Water Mask
@@ -196,7 +196,7 @@ res=coarse
 nom_in=base_in.replace("_10m.mnt","_%sm.%s"%(res,suff_proto))
 nom_out=rac_out+"_%s.TIF"%suff_MAJA                           
 commande="gdal_translate -of GTIFF  %s %s"%(nom_in,nom_out)
-print commande
+print(commande)
 os.system(commande)
 
 
