@@ -175,12 +175,14 @@ print(liste_fic_eau)
 to_download = False
 for file_srtm in liste_fic_mnt:
     if os.path.exists(rep_mnt_in+file_srtm) == False:
-        print('download ', liste_fic_eau)
+        with open('to_dowload_srtm.txt', 'a') as f:
+            f.write(file_srtm + '\n')
         to_download = True
 
 for file_srtm in liste_fic_eau:
     if os.path.exists(rep_mnt_in+file_srtm+'.shp') == False:
-        print('download ', file_srtm)
+        with open('to_dowload_srbd.txt', 'a') as f:
+            f.write(file_srtm + '\n')
         to_download = True
 
 if to_download == True:
