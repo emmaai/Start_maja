@@ -55,11 +55,13 @@ else:
                       help="Traitement des masques d'eau seulement")
     parser.add_option("-n", dest="sans_numero", action="store_true", \
                       help="Traitement sans numero de tuile")
+    parser.add_option("-d", "--download", dest="download", action="store_true",help="dump aux files required", default=False)
 
     (options, args) = parser.parse_args()
     parser.check_required("-p")
     parser.check_required("-s")
     parser.check_required("-m")
+    parser.check_required("-d")
 
 # lecture du fichier de paramètres et du fichier site
 (rep_mnt_in, rep_mnt, rep_swbd, rep_eau) = lire_param_txt(options.fic_param)
@@ -172,15 +174,15 @@ print(("latitudes", lr_latlon_swbd[1], ul_latlon_swbd[1]))
 print(("center coordinates", liste_centre_eau))
 print(liste_fic_eau)
 
-to_download = False
+to_download = False 
 for file_srtm in liste_fic_mnt:
-    if os.path.exists(rep_mnt_in+file_srtm) == False:
+    if os.path.exists(rep_mnt_in+file_srtm) == False and options.download == True:
         with open('to_dowload_srtm.txt', 'a') as f:
             f.write(file_srtm + '\n')
         to_download = True
 
 for file_srtm in liste_fic_eau:
-    if os.path.exists(rep_mnt_in+file_srtm+'.shp') == False:
+    if os.path.exists(rep_mnt_in+file_srtm+'.shp') == False and options.download == True:
         with open('to_dowload_srbd.txt', 'a') as f:
             f.write(file_srtm + '\n')
         to_download = True
